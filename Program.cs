@@ -71,6 +71,7 @@ namespace PropertiesListGenerator
                 writer.WriteLine(string.Format("{0}Name = \"{1}\",", "\t\t\t", item.Name));
                 writer.WriteLine(string.Format("{0}Path = \"{1}\",", "\t\t\t", item.Path));
                 writer.WriteLine(string.Format("{0}Section = \"{1}\",", "\t\t\t", item.Section));
+                writer.WriteLine(string.Format("{0}Type = \"{1}\",", "\t\t\t", item.Type));
                 writer.WriteLine("\t\t" + "},");
             }
             writer.WriteLine("\t};");
@@ -121,9 +122,8 @@ namespace PropertiesListGenerator
             {
                 var url = "https://docs.microsoft.com/en-us/windows/win32/properties/props-" + Path.Replace('.', '-').ToLower();
                 var data = new System.Net.WebClient().DownloadString(url);
-                var index = data.IndexOf("type = ");
-                var type = data.Substring(index).Split("\n")[0];
-
+                var type = data.Split("type = ")[1].Split("\n")[0];
+                Console.WriteLine(type);
                 Type = GetType(type);
             }
 
