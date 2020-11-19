@@ -1,7 +1,7 @@
 # PropertiesListGenerator
 This application is used to generate code for a properties list for the Files UWP application. Property type is obtained through the MS docs website.
 
-# Sample Input
+### Sample Input
 ```
 //GPS
 "System.GPS.Latitude",
@@ -28,7 +28,7 @@ This application is used to generate code for a properties list for the Files UW
 "System.Music.DisplayArtist",
 "System.Media.CreatorApplication",
 ```
-# Output
+### Output
 ```
 using System; 
 using System.Collections.Generic;
