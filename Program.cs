@@ -128,11 +128,11 @@ namespace PropertiesListGenerator
             foreach (var item in items)
             {
                 writer.WriteLine("\t\t" + "new FileProperty() {");
-                writer.WriteLine(string.Format("{0}NameResource = ResourceController.GetTranslation({1}),", "\t\t\t", item.Name));
+                writer.WriteLine(string.Format("{0}NameResource = ResourceController.GetTranslation(\"{1}\"),", "\t\t\t", item.NameResource));
                 writer.WriteLine(string.Format("{0}Property = \"{1}\",", "\t\t\t", item.Path));
                 writer.WriteLine(string.Format("{0}Section = \"{1}\",", "\t\t\t", item.Section));
                 if(!string.IsNullOrWhiteSpace(item.ConverterName))
-                    writer.WriteLine(string.Format($"{0}Converter = {1},", "\t\t\t", item.ConverterName));
+                    writer.WriteLine(string.Format("{0}Converter = {1},", "\t\t\t", item.ConverterName));
                 writer.WriteLine("\t\t" + "},");
                 writer2.WriteLine($"<data name=\"{item.NameResource}\" xml:space=\"preserve\">");
                 writer2.WriteLine($"\t<value>{item.Name}</value>");
