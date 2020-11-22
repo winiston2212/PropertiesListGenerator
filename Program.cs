@@ -130,7 +130,7 @@ namespace PropertiesListGenerator
                 writer.WriteLine("\t\t" + "new FileProperty() {");
                 writer.WriteLine(string.Format("{0}NameResource = ResourceController.GetTranslation(\"{1}\"),", "\t\t\t", item.NameResource));
                 writer.WriteLine(string.Format("{0}Property = \"{1}\",", "\t\t\t", item.Path));
-                writer.WriteLine(string.Format("{0}Section = \"{1}\",", "\t\t\t", item.Section));
+                writer.WriteLine(string.Format("{0}Section = ResourceController.GetTranslation(\"{1}\"),", "\t\t\t", item.SectionResource));
                 if(!string.IsNullOrWhiteSpace(item.ConverterName))
                     writer.WriteLine(string.Format("{0}Converter = {1},", "\t\t\t", item.ConverterName));
                 writer.WriteLine("\t\t" + "},");
@@ -158,6 +158,7 @@ namespace PropertiesListGenerator
             public string Name { get; set; }
 
             public string NameResource {get; set;}
+            public string SectionResource {get; set;}
             public string Path { get; set; }
             public string ConverterName { get; set; }
             public string ControlType { get; set; }
@@ -194,10 +195,14 @@ namespace PropertiesListGenerator
 
             private void SetSection() {
                 var split = Path.Split('.');
-                if(split.Length > 2)
+                if(split.Length > 2) {
                     Section = split[1];
-                else
+                    SectionResource = $"Section{split[1]}";
+                }
+                else {
                     Section = "Core";
+                    SectionResource = "PropertySectionCore";
+                }
             }
 
             private string GetConverter(string type) {
