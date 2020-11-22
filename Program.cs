@@ -36,8 +36,10 @@ namespace PropertiesListGenerator
 
             //GPS
             "System.GPS.Latitude",
+            "System.GPS.LatitudeDecimal",
             "System.GPS.LatitudeRef",
             "System.GPS.Longitude",
+            "System.GPS.LongitudeDecimal",
             "System.GPS.LongitudeRef",
             "System.GPS.Altitude",
 
@@ -105,7 +107,8 @@ namespace PropertiesListGenerator
 
         };
 
-        private static string FilePath = "C:\\Users\\winis\\OneDrive\\Programming\\GitHub\\PropertiesListGenerator\\bin\\FilePropertyList.cs";
+        private static string FilePath = "C:\\Users\\winis\\OneDrive\\Programming\\GitHub\\PropertiesListGenerator\\bin\\FilePropertyList.txt";
+        private static string ResourcePath = "C:\\Users\\winis\\OneDrive\\Programming\\GitHub\\PropertiesListGenerator\\bin\\FilePropertyNameResources.txt";
         static void Main(string[] args)
         {
             var propertiesList = new List<PropertyItem>();
@@ -121,23 +124,23 @@ namespace PropertiesListGenerator
         private static void SaveData(List<PropertyItem> items)
         {
             StreamWriter writer = File.CreateText(FilePath);
-            writer.WriteLine("using System; \nusing System.Collections.Generic;");
-            writer.WriteLine("class PropertiesList {");
-            writer.WriteLine("\tpublic List<PropertiesListItem> Properties = new List<PropertiesListItem>() {");
+            StreamWriter writer2 = File.CreateText(ResourcePath);
             foreach (var item in items)
             {
                 writer.WriteLine("\t\t" + "new FileProperty() {");
-                writer.WriteLine(string.Format("{0}Name = \"{1}\",", "\t\t\t", item.Name));
+                writer.WriteLine(string.Format("{0}NameResource = ResourceController.GetTranslation({1}),", "\t\t\t", item.Name));
                 writer.WriteLine(string.Format("{0}Property = \"{1}\",", "\t\t\t", item.Path));
                 writer.WriteLine(string.Format("{0}Section = \"{1}\",", "\t\t\t", item.Section));
                 if(!string.IsNullOrWhiteSpace(item.ConverterName))
-                    writer.WriteLine(string.Format("{0}Converter = \"{1}\",", "\t\t\t", item.ConverterName));
+                    writer.WriteLine(string.Format($"{0}Converter = {1},", "\t\t\t", item.ConverterName));
                 writer.WriteLine("\t\t" + "},");
+                writer2.WriteLine($"<data name=\"{item.NameResource}\" xml:space=\"preserve\">");
+                writer2.WriteLine($"\t<value>{item.Name}</value>");
+                writer2.WriteLine($"</data>");
             }
-            writer.WriteLine("\t};");
-            writer.WriteLine("}");
 
             writer.Close();
+            writer2.Close();
         }
 
         private enum PropertyType
@@ -153,6 +156,8 @@ namespace PropertiesListGenerator
         {
             public PropertyType Type { get; set; }
             public string Name { get; set; }
+
+            public string NameResource {get; set;}
             public string Path { get; set; }
             public string ConverterName { get; set; }
             public string ControlType { get; set; }
@@ -175,6 +180,7 @@ namespace PropertiesListGenerator
             {
                 var array = Path.Split('.');
                 var name = array[array.Length - 1];
+                NameResource = $"Property{name}";
                 name = string.Concat(name.Select(x => Char.IsUpper(x) ? " " + x : x.ToString())).TrimStart(' ');
                 Name = name;
             }
@@ -187,7 +193,11 @@ namespace PropertiesListGenerator
             }
 
             private void SetSection() {
-                Section = Path.Split('.')[1];
+                var split = Path.Split('.');
+                if(split.Length > 2)
+                    Section = split[1];
+                else
+                    Section = "Core";
             }
 
             private string GetConverter(string type) {
